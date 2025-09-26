@@ -7,3 +7,7 @@
 - Rodríguez Medina José Alfredo.
 
 ![Portada](Portada.png)
+
+$$
+\sum
+$$
