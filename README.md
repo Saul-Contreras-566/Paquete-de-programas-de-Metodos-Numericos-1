@@ -1,5 +1,7 @@
 # Paquete de programas de Métodos numéricos
 
+Grupo: 1301.
+
 ## Integrantes:
 
 - Contreras Rojas Emanuel Saúl.
