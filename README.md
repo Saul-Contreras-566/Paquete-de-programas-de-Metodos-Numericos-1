@@ -1,5 +1,7 @@
 # Paquete de programas de Métodos numéricos
 
+![Portada](Portada.png)
+
 Grupo: 1301.
 
 ## Integrantes:
@@ -8,7 +10,19 @@ Grupo: 1301.
 - Salazar Hernández Alejandro.
 - Rodríguez Medina José Alfredo.
 
-![Portada](Portada.png)
+## Método de compilación del programa
+
+En caso de tener la herramienta GNU Make, se puede hacer uso del comando:
+
+```
+make
+```
+
+De no tenerlo instalado, aún puede hacerse uso del siguiente comando:
+
+```
+gcc -Wall -Wextra -Werror -I headers src/main.c src/Funciones_basicas.c src/Opcion_01.c -o Paquete_de_programas-Metodos_numericos.exe -lm
+```
 
 ## Contenido del paquete
 
