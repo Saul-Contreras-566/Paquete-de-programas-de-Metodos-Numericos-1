@@ -92,8 +92,13 @@ static void Iterador (int funcion_seleccionada) {
 	else
 		puts ("El error relativo no es menor a la tolerancia.");
 
-	// Imprimiendo la raíz
-	printf ("Aproximación de la raíz: %lf\n", x[0]);
+        // Imprimiendo datos de la última iteración hecha
+        puts ("--------------------------------------------------");
+        printf ("Iteración de la aproximanción a la raiz: %d.\n", i - 1);
+        printf ("Aproximación de la raíz: %.15lf.\n", x[0]); 
+        printf ("Error absoluto: %.15lf.\n", error_absoluto);
+        printf ("Error relativo: %.15lf %%.\n", error_relativo); 
+        printf ("Tolerancia usada: %.15lf %%.\n", tolerancia);
 }
 
 
@@ -119,6 +124,7 @@ void Opcion_01 () {
 		// Procesando selección
 		if (seleccion >= 1 && seleccion <= 4) {
 			Iterador (seleccion);
+			puts ("--------------------------------------------------");
 			respuesta = Pregunta_cerrada ("¿Quiére iterar otra función");
 		}
 		else
