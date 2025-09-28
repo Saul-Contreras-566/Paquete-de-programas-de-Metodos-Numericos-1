@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "Funciones_basicas.h"
 #include "Opcion_01.h"
 
@@ -6,6 +7,10 @@
 
 int main () {
 	int seleccion;
+
+	#ifdef _WIN32
+    system ("chcp 65001"); // Permitiendo acentos en Windows
+    #endif
 
 	// Portada del programa
 	LIMPIAR_PANTALLA ();
