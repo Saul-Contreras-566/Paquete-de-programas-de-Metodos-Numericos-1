@@ -12,7 +12,7 @@ Grupo: 1301.
 
 ## Método de compilación del programa
 
-En caso de tener la herramienta GNU Make, se puede hacer uso del siguiente comando desde la raíz del repositorio:
+En caso de tener la herramienta GNU Make, se puede hacer uso del siguiente comando desde la carpeta raíz del repositorio:
 
 ```
 make
