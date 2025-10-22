@@ -1,5 +1,5 @@
-#ifndef OPCION_01
-#define OPCION_01
+#ifndef OPCION_02
+#define OPCION_02
 
 void Opcion_02 ();
 
