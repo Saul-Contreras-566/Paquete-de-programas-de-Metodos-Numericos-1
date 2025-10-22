@@ -5,17 +5,20 @@
 
 
 static int EDD (Matriz matriz*){
-int i, j, fRes;
+int i, j;
+  double fRes;
   int filaEDD;
+  
 for(i=0;i<=matriz.filas;i++){
     fRes=0;
+  
     for(j=0;j<matriz.columnas;i++){
       if(j!=i){
     fRes += fabs(matriz.entrada[j]);
-      }
-    }
+      }  }
+  
 if(fabs (matriz.entrada[i]) >= fRes){
-        filaEDD +=1;
+        filaEDD += 1;
       }
 }
 
