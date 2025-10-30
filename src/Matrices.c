@@ -15,6 +15,12 @@ Código de las funciones con matrices.
 
 
 double *Leer_entradas_de_matriz (int filas, int columnas) {
+	/* Esta función está pensada para que se puedan leer las entradas de las matrices de una
+	manera más flexible, por ejemplo, en un sistema de ecuaciones de la forma `Ax=b`, se puede
+	pedir al usuario primero las dimensiones de las matriz `A` y luego simplemente copiar el
+	número de filas al vector `b`, de modo que no se le pide o permite al usuario insertar dos
+	veces el número de filas, impidiéndole así que inserte un sistema incoherente. */
+
 	int i, j; // Variables para iteraciones
 	int x, y; // Variables para la selección de la entrada a corregir
 	int respuesta; // Respuesta del usuaior para corregir otra entrada o no
@@ -61,6 +67,9 @@ double *Leer_entradas_de_matriz (int filas, int columnas) {
 
 
 Matriz Leer_matriz () {
+	/* Esta función pide las dimensiones de la matriz y luego lee sus entradas. Las entradas
+	son leídas por una función aparte. */
+
 	Matriz lectura;
 
 	// Pidiendo las dimensiones de la matriz
@@ -79,6 +88,8 @@ Matriz Leer_matriz () {
 
 
 static int Factorial (int numero) {
+	/* (Función provisional) Calcula el factorial de un número entreo. */
+
 	int resultado = 1;
 	int i; // Variable para iteraciones
 
@@ -90,8 +101,9 @@ static int Factorial (int numero) {
 
 
 
-double Determinante (Matriz matriz) {
-	int i, j, k, m; // Variables para iteraciones
+double Determinante (Matriz matriz) {int i, j, k, m; // Variables para iteraciones
+	/* (Función provisional) Calcula el determinante de una matriz. */
+
 	int cursor = 0, disponible, pasos = Factorial(matriz.filas);
 	double determinante = 0.0, temporal;
 
@@ -156,6 +168,11 @@ double Determinante (Matriz matriz) {
 
 
 int Verificar_EDD (Matriz matriz) {
+	/* Función que verifica que una función sea estrictamente dominante diagonalmente. Compara
+	el valor absoluto de cada elemento de la diagonal con la suma de los valores absolutos del
+	resto de elemtos de las misma fila que el del elemento en la diagonal. Devuelve `1` en caso
+	de ser estrcitamente dominante diagonalmente o `0` en caso de no serlo. */
+
 	int i, j; // Variables para iteraciones
 	double suma; // Para verificar la dominancia
 	int edd = 1; // Para indicar si la matriz es EDD o no, suponemos que lo es con 1 para después tratar de desmentirlo y, en caso de no ser EDD, detener el proceso de verificación
@@ -175,6 +192,10 @@ int Verificar_EDD (Matriz matriz) {
 
 
 double Norma_espectral (int numero_entradas, double *entrada) {
+	/* Calcula la norma espectral de un vector. Un simple bucle `for` que itera comparaciones
+	entre entradas del vector y en cada una de ellas se queda con la entrada más grande. De esta
+	forma, obtiene la entrada de mayor magnitud y, por lo tanto, la norma espectral. */
+
 	int i; // Variable para iteraciones
 	double maximo;
 
