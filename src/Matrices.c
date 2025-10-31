@@ -87,82 +87,68 @@ Matriz Leer_matriz () {
 
 
 
-static int Factorial (int numero) {
-	/* (Función provisional) Calcula el factorial de un número entreo. */
-
-	int resultado = 1;
-	int i; // Variable para iteraciones
-
-	for (i = 1; i <= numero; i++)
-		resultado *= i;
-	
-	return resultado;
-}
-
-
-
-double Determinante (Matriz matriz) {int i, j, k, m; // Variables para iteraciones
-	/* (Función provisional) Calcula el determinante de una matriz. */
-
-	int cursor = 0, disponible, pasos = Factorial(matriz.filas);
-	double determinante = 0.0, temporal;
-
-	// Declarando variables inicializadas
-	int *seleccionados = malloc(matriz.filas * sizeof(int));
-	double *signos = malloc(matriz.filas * sizeof(double));
-	for (i = 0; i < matriz.filas; i++) {
-		seleccionados[i] = 0;
-		signos[i] = -1.0;
-	}
-
-	// Calculando determinante
-	for (i = 0; i < pasos; i++) {
-		// Seleccionando columna para la j-ésima fila
-		for (j = cursor; j >= 0 && j < matriz.filas; j++) {
-			signos[j] *= -1.0; // Intercalando signo
-			disponible = 0;
-			for (k = seleccionados[j]; disponible == 0; k++) {
-				if (k < matriz.columnas) {
-					// En caso de que no sobrepase las columnas
-
-					// Verificando disponibilidad de la columna
-					disponible = 1;
-					for (m = 0; m < j; m++)
-						if (seleccionados[m] == k)
-							disponible = 0;
-
-					// Seleccionando columna en caso de estar disponible
-					if (disponible == 1)
-						seleccionados[j] = k;
-				} else {
-					// En caso de que sobrepase las columnas
-
-					seleccionados[j] = 0; // Seleccionando la primera columna en la fila actual
-					seleccionados[j - 1] += 1; // Seleccionando siguiente columna de la fila anterior
-					signos[j] = -1.0; // Cambiando signo para que cuando se vuelva a llegar a esta fila el signo sea positivo
-					j -= 2; // Regresando dos filas antes para que, cuando se aumente 1, quede en la fila anterior
-					break; // Cambiando de fila
-				}
-			}
-
-			// Seleccionando última fila donde se seleccionó una columna
-			cursor = j;
-		}
-
-		// Multiplicando y sumando
-		temporal = 1.0;
-		for (j = 0; j < matriz.filas; j++)
-			temporal *= matriz.entrada[j * matriz.columnas + seleccionados[j]] * signos[j];
-		determinante += temporal;
-		seleccionados[matriz.filas - 1] += 1;
-	}
-
-	// Liberando memoria
-	free(seleccionados);
-	free(signos);
-
-	// Regresando determinante
-	return determinante;
+double Determinante (Matriz matriz) {
+    /* Calcula el determinante de una matriz cuadrada usando eliminación gaussiana */
+    
+    if (matriz.filas != matriz.columnas) {
+        printf ("ERROR: La matriz debe ser cuadrada para calcular el determinante.\n");
+        return 0;
+    }
+    
+    double determinante = 1.0;
+    int i, j, k; // Variables para iteraciones
+    int columna_del_maximo;
+    double valor_temporal, factor;
+    
+    // Crear una copia de la matriz para no modificar la original
+    Matriz temporal;
+    temporal.filas = matriz.filas;
+    temporal.columnas = matriz.filas;
+    temporal.entrada = (double *) malloc (sizeof (double) * matriz.filas * matriz.filas);
+    
+    // Copiar los valores de la matriz original
+    for (i = 0; i < matriz.filas * matriz.filas; i++) {
+        temporal.entrada[i] = matriz.entrada[i];
+    }
+    
+    // Aplicar eliminación gaussiana
+    for (i = 0; i < matriz.filas; i++) {
+        // Buscar el pivote máximo en la columna actual
+        columna_del_maximo = i; // Seleccionando la columna del elmento de la diagonal principal para compararlo con el resto de elementos de su misma fila
+        for (k = i + 1; k < matriz.filas; k++)
+            if (fabs (temporal.entrada[k * matriz.columnas + i]) > fabs (temporal.entrada[columna_del_maximo * matriz.columnas + i]))
+                columna_del_maximo = k;
+        
+        // Si el pivote es cero, el determinante es cero
+        if (fabs (temporal.entrada[columna_del_maximo * matriz.columnas + i]) == 0.0) {
+            free (temporal.entrada);
+            return 0.0;
+        }
+        
+        // Intercambiar filas si es necesario
+        if (columna_del_maximo != i) {
+            for (k = 0; k < matriz.filas; k++) {
+                valor_temporal = temporal.entrada[i * matriz.columnas + k];
+                temporal.entrada[i * matriz.columnas + k] = temporal.entrada[columna_del_maximo * matriz.columnas + k];
+                temporal.entrada[columna_del_maximo * matriz.columnas + k] = valor_temporal;
+            }
+            determinante *= -1; // El determinante cambia de signo al intercambiar filas
+        }
+        
+        // Hacer ceros debajo del pivote
+        for (k = i + 1; k < matriz.filas; k++) {
+            factor = temporal.entrada[k * matriz.columnas + i] / temporal.entrada[i * matriz.columnas + i];
+            for (j = i; j < matriz.filas; j++) {
+                temporal.entrada[k * matriz.columnas + j] -= factor * temporal.entrada[i * matriz.columnas + j];
+            }
+        }
+        
+        // Multiplicar el determinante por el pivote
+        determinante *= temporal.entrada[i * matriz.columnas + i];
+    }
+    
+    free (temporal.entrada);
+    return determinante;
 }
 
 
