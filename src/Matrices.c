@@ -92,7 +92,7 @@ double Determinante (Matriz matriz) {
     
     if (matriz.filas != matriz.columnas) {
         printf ("ERROR: La matriz debe ser cuadrada para calcular el determinante.\n");
-        return 0;
+        return 0.0;
     }
     
     double determinante = 1.0;
@@ -132,7 +132,7 @@ double Determinante (Matriz matriz) {
                 temporal.entrada[i * matriz.columnas + k] = temporal.entrada[columna_del_maximo * matriz.columnas + k];
                 temporal.entrada[columna_del_maximo * matriz.columnas + k] = valor_temporal;
             }
-            determinante *= -1; // El determinante cambia de signo al intercambiar filas
+            determinante *= -1.0; // El determinante cambia de signo al intercambiar filas
         }
         
         // Hacer ceros debajo del pivote
