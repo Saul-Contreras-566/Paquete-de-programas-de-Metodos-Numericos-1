@@ -17,9 +17,10 @@ int main () {
 	LIMPIAR_PANTALLA ();
 	puts ("PAQUETE DE PROGRAMAS - MÉTODOS NUMÉRICOS\n");
 	puts ("Integrantes:");
-	puts ("- Contreras Rojas Emanuel Saúl");
-	puts ("- Rodríguez Medina José Alfredo");
-	puts ("- Salazar Hernández Alejandro");
+	puts ("- Contreras Rojas Emanuel Saúl.");
+	puts ("- Galindo Juárez Miguel Ángel.");
+	puts ("- Rodríguez Medina José Alfredo.");
+	puts ("- Salazar Hernández Alejandro.");
 	puts ("--------------------------------------------------");
 	ESPERAR_TECLA ();
 
