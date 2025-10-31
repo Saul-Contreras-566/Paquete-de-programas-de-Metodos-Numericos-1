@@ -7,6 +7,7 @@ Grupo: 1301.
 ## Integrantes:
 
 - Contreras Rojas Emanuel Saúl.
+- Galindo Juárez Miguel Ángel.
 - Salazar Hernández Alejandro.
 - Rodríguez Medina José Alfredo.
 
