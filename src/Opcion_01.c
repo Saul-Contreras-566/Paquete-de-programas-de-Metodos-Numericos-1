@@ -92,13 +92,13 @@ static void Iterador (int funcion_seleccionada) {
 	else
 		puts ("El error relativo no es menor a la tolerancia.");
 
-        // Imprimiendo datos de la última iteración hecha
-        puts ("--------------------------------------------------");
-        printf ("Iteración de la aproximanción a la raiz: %d.\n", i - 1);
-        printf ("Aproximación de la raíz: %.15lf.\n", x[0]); 
-        printf ("Error absoluto: %.15lf.\n", error_absoluto);
-        printf ("Error relativo: %.15lf %%.\n", error_relativo); 
-        printf ("Tolerancia usada: %.15lf %%.\n", tolerancia);
+	// Imprimiendo datos de la última iteración hecha
+	puts ("--------------------------------------------------");
+	printf ("Iteración de la aproximanción a la raiz: %d.\n", i - 1);
+	printf ("Aproximación de la raíz: %.15lf.\n", x[0]);
+	printf ("Error absoluto: %.15lf.\n", error_absoluto);
+	printf ("Error relativo: %.15lf %%.\n", error_relativo);
+	printf ("Tolerancia usada: %.15lf %%.\n", tolerancia);
 }
 
 

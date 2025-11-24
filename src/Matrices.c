@@ -14,6 +14,8 @@ Código de las funciones con matrices.
 
 
 
+// FUNCIONES BÁSICAS CON MATRICES ------------------------------------------------------------------
+
 double *Leer_entradas_de_matriz (int filas, int columnas) {
 	/* Esta función está pensada para que se puedan leer las entradas de las matrices de una
 	manera más flexible, por ejemplo, en un sistema de ecuaciones de la forma `Ax=b`, se puede
@@ -192,4 +194,270 @@ double Norma_espectral (int numero_entradas, double *entrada) {
 	
 	// Regresando norma espectral
 	return maximo;
+}
+
+
+
+int Es_simetrica (Matriz matriz) {
+	int i, j; // Variables de interación
+	int simetria = 1; // Suponiendo que es simétrica para después tratar de demostrar lo contrario
+
+	for (i = 0; i < matriz.filas && simetria == 1; i++)
+		for (j = 0; j < matriz.columnas && simetria == 1; j++)
+			if(matriz.entrada[i * matriz.columnas + j] == matriz.entrada[j * matriz.columnas + i])
+				simetria  = 0;
+	
+	return simetria;
+}
+
+
+
+void Normalizar (Matriz vector, double norma) {
+	int i; // Variable de iteracion
+
+	for (i = 0; i < vector.filas * vector.columnas; i++)
+		vector.entrada[i] /= norma;
+}
+
+
+
+void Invertir_matriz (Matriz matriz) {
+	/* Utiliza el método de intercambio para invertir la matriz. */
+
+	int i, j, h, k, m, encontrado;
+	double *filas_marcadas = (double *) malloc (sizeof(double) * matriz.filas);
+	double *columnas_marcadas = (double *) malloc (sizeof(double) * matriz.columnas);
+	double temp; // Para divisiones entre el pivote
+
+	// Inicializando en cero los arreglos de filas y columnas marcadas
+	for (m = 0; m < matriz.filas; m++) {
+		filas_marcadas[m] = 0.0;
+		columnas_marcadas[m] = 0.0;
+	}
+
+	// Iterando
+	for (m = 0; m < matriz.filas; m++) {
+		// Buscando el pivote
+		// Buscando el primer elemento con el cual comparar
+		encontrado = 0;
+		for (i = 0; i < matriz.filas && encontrado == 0; i++)
+			for (j = 0; j < matriz.columnas && encontrado == 0; j++)
+				if (filas_marcadas[i] == 0 && columnas_marcadas[j] == 0) {
+					encontrado = 1;
+					h = i;
+					k = j;
+				}
+		// Buscando el elmento de mayor magnitud
+		for (i = 0; i < matriz.filas; i++)
+			for (j = 0; j < matriz.columnas; j++)
+				if (filas_marcadas[i] == 0 && columnas_marcadas[j] == 0)
+					if (fabs (matriz.entrada[h * matriz.columnas + k]) < fabs (matriz.entrada[i * matriz.columnas + j])) {
+						// Seleccionado
+						h = i;
+						k = j;
+						//Marcando fila y columna
+						filas_marcadas[i] = 1;
+						columnas_marcadas[j] = 1;
+					}
+
+		// Dividiendo entre el pivote los demás elementos de su mismo renglón y cambiandoles el signo
+		temp = matriz.entrada[h * matriz.columnas + k];
+		for (i = 0; i < matriz.filas; i++)
+			matriz.entrada[h * matriz.columnas + i] /= temp * -1.0;
+
+		// Restando a las demás entradas de la matriz
+		for (i = 0; i < matriz.filas; i++)
+			for (j = 0; j < matriz.columnas; j++)
+				if (i != h && j != k)
+					matriz.entrada[i * matriz.filas + j] += matriz.entrada[h * matriz.columnas + j] * matriz.entrada[i * matriz.columnas + k];
+		
+		// Dividiendo entre el pivote los demás elementos de su misma columna
+		for (i = 0; i < matriz.filas; i++)
+			matriz.entrada[i * matriz.columnas + k] /= temp;
+
+		// Cambiando el pivote por su recíproco
+		matriz.entrada[h * matriz.columnas + k] = 1.0 / temp;
+	}
+
+	// Liberando memoria de las filas y columnas marcadas
+	free (filas_marcadas);
+	free (columnas_marcadas);
+}
+
+
+
+// FUNCIONES PARA FACTORIZACIÓN DE MATRICES --------------------------------------------------------
+
+void Factorizacion_doolittle (Matriz *lower, Matriz *upper, Matriz matriz) {
+	int i,j,k; // Variables para iteraciones
+
+	// Inicializando las matrices `lower` y `upper`
+	(*lower).filas = matriz.filas;
+	(*lower).columnas = matriz.columnas;
+	(*lower).entrada = (double *) malloc (sizeof (double) * matriz.filas * matriz.columnas);
+	(*upper).filas = matriz.filas;
+	(*upper).columnas = matriz.columnas;
+	(*upper).entrada = (double *) malloc (sizeof (double) * matriz.filas * matriz.columnas);
+
+	// Comenzando la factorización
+	
+	// Factorizando la matriz
+	for (i = 0; i < (*lower).filas; i++)
+		for (j = 0; j < (*lower).columnas; j++) {
+			// Asignando valor a la entrada de `upper`
+			if (i > j) { // Caso cuando el número de la fila de la entrada es mayor que el de su columna
+				(*upper).entrada[i * (*upper).columnas + j] = 0.0;
+			}
+			else { // Caso cuando el número de la fila de la entrada sea menor o igual al de la columna
+				(*upper).entrada[i * (*upper).columnas + j] = matriz.entrada[i * matriz.columnas + j];
+				for (k = 0; k < i; k++)
+					(*upper).entrada[i * (*upper).columnas + j] -= (*lower).entrada[i * (*lower).columnas + k] * (*upper).entrada[k * (*upper).columnas + j];
+			}
+			
+			// Asignando valor a la entrada de `lower`
+			if (i > j) { // Caso cuando el número de la fila de la entrada es mayor que el de su columna
+				(*lower).entrada[i * (*lower).columnas + j] = matriz.entrada[i * matriz.columnas + j];
+				for (k = 0; k < j; k++)
+					(*lower).entrada[i * (*lower).columnas + j] -= (*lower).entrada[i * (*lower).columnas + k] * (*upper).entrada[k * (*upper).columnas + j];
+				(*lower).entrada[i * (*lower).columnas + j] /= (*upper).entrada[j * (*upper).columnas + j];
+			}
+			else if (i == j) { // Caso cuando el número de la fila de la entrada es igual que el de su columna
+				(*lower).entrada[i * (*lower).columnas + j] = 1.0;
+			}
+			else { // en caso contrario
+				(*lower).entrada[i * (*lower).columnas + j] = 0.0;
+			}
+		}
+}
+
+
+
+Matriz Factorizacion_cholesky (Matriz matriz, int *error) {
+	int i, j, m; // Variables para iteraciones
+	Matriz lower;
+
+	// Inicializando las dimensiones de `lower`
+	lower.filas = matriz.filas;
+	lower.columnas = matriz.columnas;
+	lower.entrada = (double *) malloc (sizeof(double) * lower.filas * lower.columnas);
+
+	// Obteniendo los valores de las entradas de `lower`
+	for (i = 0; i < lower.filas; i++)
+		for (j = 0; j < lower.columnas; j++) {
+			// Si la fila es menor a la columna
+			if (j > i)
+				lower.entrada[i * lower.columnas + j] = 0; // Se iguala a ceros
+			// En caso contrario
+			else {
+				// Esto ocurre en caso de que la columna sean igual a la fila o menor que esta
+
+				// Asignando el valo de la entrada con misma fila y columna en la matriz de coeficientes
+				lower.entrada[i * lower.columnas + j] = matriz.entrada[i * lower.columnas + j];
+
+				// En caso de ser iguales la columna y la fila
+				if (j == i) {
+					// Restando cuadrados
+					for (m = 0; m < j; m++)
+						lower.entrada[i * lower.columnas + j] -= pow (lower.entrada[i * lower.columnas + m], 2.0);
+
+					// Verificando que sea definida positiva
+					if (lower.entrada[i * lower.columnas + j] < 0) { // Este caso ocurrirá cuando la matriz no es definida positiva
+						*error = 1;
+						return matriz;
+					} else
+						lower.entrada[i * lower.columnas + j] = sqrt (lower.entrada[i * lower.columnas + j]);
+				// En caso de que la columna sea menor que la fila
+				}
+				else {
+					for (m = 0; m < j; m++)
+						lower.entrada[i * lower.columnas + j] -= lower.entrada[i * lower.columnas + m] * lower.entrada[j * lower.columnas + m];
+					lower.entrada[i * lower.columnas + j] /= lower.entrada[j * lower.columnas + j];
+				}
+			}
+		}
+	
+	// Regresando la matriz factorizada
+	return lower;
+}
+
+
+
+void Factorizacion_crout (Matriz *lower, Matriz *upper, Matriz matriz) {
+	int i,j,k; // Variables para iteraciones
+
+	// Inicializando las matrices `lower` y `upper`
+	(*lower).filas = matriz.filas;
+	(*lower).columnas = matriz.columnas;
+	(*lower).entrada = (double *) malloc (sizeof (double) * matriz.filas * matriz.columnas);
+	(*upper).filas = matriz.filas;
+	(*upper).columnas = matriz.columnas;
+	(*upper).entrada = (double *) malloc (sizeof (double) * matriz.filas * matriz.columnas);
+
+	// Factorizando la matriz
+	for (i = 0; i < (*lower).filas; i++)
+		for (j = 0; j < (*lower).columnas; j++) {
+			// Asignando valor a la entrada de `upper`
+			if (i > j) { // Caso cuando el número de la fila de la entrada es mayor que el de su columna
+				(*upper).entrada[i * (*upper).columnas + j] = 0.0;
+			}
+			else if (i == j) { // Caso cuando el número de la fila de la entrada es igual que el de su columna
+				(*upper).entrada[i * (*upper).columnas + j] = 1.0;
+			}
+			else { // Caso cuando el número de la fila de la entrada sea menor o igual al de la columna
+				(*upper).entrada[i * (*upper).columnas + j] = matriz.entrada[i * matriz.columnas + j];
+				for (k = 0; k < i; k++)
+					(*upper).entrada[i * (*upper).columnas + j] -= (*lower).entrada[i * (*lower).columnas + k] * (*upper).entrada[k * (*upper).columnas + j];
+				(*upper).entrada[i * (*upper).columnas + j] /= (*lower).entrada[i * (*lower).columnas + i];
+			}
+			
+			// Asignando valor a la entrada de `lower`
+			if (i >= j) { // Caso cuando el número de la fila de la entrada es mayor o igual que el de su columna
+				(*lower).entrada[i * (*lower).columnas + j] = matriz.entrada[i * matriz.columnas + j];
+				for (k = 0; k < j; k++)
+					(*lower).entrada[i * (*lower).columnas + j] -= (*lower).entrada[i * (*lower).columnas + k] * (*upper).entrada[k * (*upper).columnas + j];
+			}
+			else { // en caso contrario
+				(*lower).entrada[i * (*lower).columnas + j] = 0.0;
+			}
+		}
+}
+
+
+
+// OTRAS FUNCIONES ---------------------------------------------------------------------------------
+
+void Imprimir_matriz (Matriz matriz) { // Pensado para imprimir matrices
+	int i, j; // Variables para iteraciones
+
+	for (i = 0; i < matriz.filas; i++) {
+		printf ("|");
+		for (j = 0; j < matriz.columnas; j++)
+			printf (" %.10lf |", matriz.entrada[i * matriz.columnas + j]);
+		puts ("");
+	}
+}
+
+void Imprimir_vector (Matriz matriz) { // Pensado para imprimir vectores fila o vectores columna
+	int i; // variable para iteraciones
+
+	printf ("( %.10lf ", matriz.entrada[0]);
+	for (i = 1; i < matriz.filas * matriz.columnas; i++)
+		printf (", %.10lf ", matriz.entrada[i]);
+	puts (")");
+}
+
+
+
+void Copiar_matriz (Matriz original, Matriz *copia) {
+	int i; // Variable para iteraciones
+
+	// Copiando dimensiones de la matriz original y liberando memoria de la matriz copia
+	(*copia).filas = original.filas;
+	(*copia).columnas = original.columnas;
+	if ((*copia).entrada != NULL)
+		free ((*copia).entrada);
+	(*copia).entrada = (double *) malloc (sizeof (double) * (*copia).filas * (*copia).columnas);
+
+	for (i = 0; i < original.filas * original.columnas; i++)
+		(*copia).entrada[i] = original.entrada[i];
 }
