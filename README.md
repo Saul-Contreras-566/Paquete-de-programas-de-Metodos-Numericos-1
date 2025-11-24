@@ -22,7 +22,7 @@ make
 De no tenerlo instalado, aún puede hacerse uso del siguiente comando:
 
 ```
-gcc -Wall -Wextra -Werror -I headers src/main.c src/Funciones_basicas.c src/Opcion_01.c src/Opcion_02.c src/Matrices.c -o Paquete_de_programas-Metodos_numericos.exe -lm
+gcc -Wall -Wextra -Werror -I headers src/main.c src/Funciones_basicas.c src/Opcion_01.c src/Opcion_02.c src/Opcion_03.c src/Matrices.c src/Metodos_sistemas_ecuaciones.c -o Paquete_de_programas-Metodos_numericos.exe -lm
 ```
 
 ## Contenido del paquete
@@ -38,4 +38,15 @@ Se hayan las raíces de las siguietnes funciones con el método de la secante y 
 
 ### Segunda opción del paquete
 
-Un entorno donde se resuelven sistemas de ecuaciones por el método numérico de Gauss-Seidel. El programa recibe el sistema de ecuaciones al introducirlo en la forma $Ax=b$, donde $A$ es la matriz de coeficientes del sistema, $b$ el vector columna al que queremos que el sistema esté igualado y $x$ el vector que queremos hayar.
+Esta opción permite resolver sistemas de ecuaciones, primero lee la matriza asociada al sistema, y posteriormente pregunta por el método a usar. En cada método, se pregunta por un vector independiente, luego, cuando el sistema se resuelve, se muestra la solución y se pregunta al usuario si quiere resolver el sistema con otro vector independiente.
+
+Los métodos que se pueden usar en esta opción son:
+
+- El método de Gauss-Seidel.
+- Factorización LU, con el método de Doolittle.
+- Factorización LU, con el método de Cholesky.
+- Factorización LU, con el método de Crout.
+
+### Tercera opción del paquete
+
+Haya el valor propio máximo y mínimo de una matriz.
