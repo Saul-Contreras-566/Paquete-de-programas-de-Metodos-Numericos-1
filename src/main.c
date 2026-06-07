@@ -1,58 +1,75 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include "Funciones_basicas.h"
-#include "Opcion_01.h"
-#include "Opcion_02.h"
-#include "Opcion_03.h"
+#include "funciones_basicas.h"
+#include "grafos_y_matrices.h"
 
+Grafo grafo;
+Matriz matriz_de_accesibilidad, matriz_de_adyacencia, matriz_de_incidencia;
 
+int Leer_tipo_de_grafo () {
+	int numero_leido;
+	grafo.clasificacion = 0;
+
+	puts ("¿Qué tipo de grafo es?");
+	puts ("0. (Salir del programa).");
+	puts ("1. Grafo no dirigido.");
+	puts ("2. Grafo dirigido.");
+	puts ("Seleccionar:");
+	numero_leido = Leer_entero_entre (0, 2);
+	
+	if (numero_leido == 2)
+		grafo.clasificacion += DIGRAFO;
+	
+	return numero_leido;
+}
+
+void Borrar_todo () {
+	unsigned int i;
+
+	// Liberando memoria del grafo.
+	for (i = 0; i < grafo.numero_de_vertices; i++)
+		free (grafo.vertices[i].nombre);
+	free (grafo.vertices);
+	for (i = 0; i < grafo.numero_de_lineas; i++)
+		free (grafo.lineas[i].nombre);
+	free (grafo.lineas);
+
+	// Liberando memoria de las matrices.
+	free (matriz_de_incidencia.entrada);
+	free (matriz_de_adyacencia.entrada);
+	free (matriz_de_accesibilidad.entrada);
+}
 
 int main () {
-	int seleccion;
+	int respuesta;
+	char insertar_grafo[] = "¿Quiére insertar otro grafo?";
 
-	#ifdef _WIN32
-	system ("chcp 65001"); // Permitiendo acentos en Windows
+	#ifdef WIN32
+	system ("chcp 65001");
 	#endif
 
-	// Portada del programa
 	LIMPIAR_PANTALLA ();
-	puts ("PAQUETE DE PROGRAMAS - MÉTODOS NUMÉRICOS\n");
-	puts ("Integrantes:");
+
+	// Portada.
+	puts ("Integrantes del equipo:");
+	puts ("- Carmona Maldonado Gibrán Isaí.");
 	puts ("- Contreras Rojas Emanuel Saúl.");
-	puts ("- Galindo Juárez Miguel Ángel.");
+	puts ("- Guzmán Ramos Carlos Emilio.");
 	puts ("- Rodríguez Medina José Alfredo.");
-	puts ("- Salazar Hernández Alejandro.");
-	puts ("--------------------------------------------------");
 	ESPERAR_TECLA ();
 
 	do {
 		LIMPIAR_PANTALLA ();
+		if (Leer_tipo_de_grafo () == 0) break;
+		Leer_relaciones ();
 
-		// Menú de selección
-		puts ("¿Qué quiere hacer?");
-		puts ("0. SALIR.");
-		puts ("1. Calcular las raices de algunas funciones con el método de la secante.");
-		puts ("2. Solucionar un sistema de ecuaciones.");
-			puts ("\t2.0. Primero se lee la matriz, luego se puede seleccionar los siguientes métodos:");
-			puts ("\t2.1. Método de Gauss-Seidel.");
-			puts ("\t2.2. Factorización LU, método de Doolittle.");
-			puts ("\t2.3. Factorización LU, método de Cholesky.");
-			puts ("\t2.4. Factorización LU, método de Crout.");
-		puts ("3. Hallar los valores propios de una matriz por el método de potencias.");
+		LIMPIAR_PANTALLA ();
+		Obtener_matrices ();
+		Clasificar ();
+		Dibujar_grafo ();
+		Borrar_todo ();
 
-		// Seleccionando
-		puts ("Seleccionar:");
-		seleccion = Leer_entero_entre (0, 3);
-
-		// Yendo a la opción seleccionada
-		switch (seleccion) {
-			case 1: Opcion_01 (); break;
-			case 2: Opcion_02 (); break;
-			case 3: Opcion_03 (); break;
-		}
-	}
-	while (seleccion != 0);
-	LIMPIAR_PANTALLA ();
+		respuesta = Pregunta_cerrada (insertar_grafo);
+	} while (respuesta == 1);
 
 	return 0;
 }
